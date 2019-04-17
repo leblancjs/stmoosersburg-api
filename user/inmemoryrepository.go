@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/leblancjs/stmoosersburg-api/entity"
@@ -39,7 +40,7 @@ func (repo *inMemoryRepository) Create(username string, email string, password s
 func (repo *inMemoryRepository) GetByID(id string) (*entity.User, error) {
 	user, ok := repo.usersByID[id]
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("user.InMemoryRepository: no user exists with ID \"%s\"", id)
 	}
 
 	return user, nil
@@ -48,7 +49,7 @@ func (repo *inMemoryRepository) GetByID(id string) (*entity.User, error) {
 func (repo *inMemoryRepository) GetByEmail(email string) (*entity.User, error) {
 	user, ok := repo.usersByEmail[email]
 	if !ok {
-		return nil, nil
+		return nil, fmt.Errorf("user.InMemoryRepository: no user exists with email \"%s\"", email)
 	}
 
 	return user, nil

@@ -45,7 +45,7 @@ func TestServiceRegistration(t *testing.T) {
 	password := "P@ssw0rd"
 
 	t.Run("fails when username validation fails", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{}, &mockHashService{})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true}, &mockHashService{})
 
 		if _, err := svc.Register("", email, password); err == nil {
 			t.Fail()
@@ -53,7 +53,7 @@ func TestServiceRegistration(t *testing.T) {
 	})
 
 	t.Run("fails when email validation fails", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{}, &mockHashService{})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true}, &mockHashService{})
 
 		if _, err := svc.Register(username, "", password); err == nil {
 			t.Fail()
@@ -61,15 +61,23 @@ func TestServiceRegistration(t *testing.T) {
 	})
 
 	t.Run("fails when password validation fails", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{}, &mockHashService{})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true}, &mockHashService{})
 
 		if _, err := svc.Register(username, email, ""); err == nil {
 			t.Fail()
 		}
 	})
 
+	t.Run("fails when user already exists with email", func(t *testing.T) {
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: false}, &mockHashService{})
+
+		if _, err := svc.Register(username, email, password); err == nil {
+			t.Fail()
+		}
+	})
+
 	t.Run("fails when hash generation fails", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{}, &mockHashService{true, false})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true}, &mockHashService{true, false})
 
 		if _, err := svc.Register(username, email, password); err == nil {
 			t.Fail()
@@ -77,7 +85,7 @@ func TestServiceRegistration(t *testing.T) {
 	})
 
 	t.Run("fails when creation in repository fails", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{failOnCreate: true}, &mockHashService{})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true, failOnCreate: true}, &mockHashService{})
 
 		if _, err := svc.Register(username, email, password); err == nil {
 			t.Fail()
@@ -85,7 +93,7 @@ func TestServiceRegistration(t *testing.T) {
 	})
 
 	t.Run("returns new user when all is well", func(t *testing.T) {
-		svc, _ := NewService(&mockRepository{}, &mockHashService{})
+		svc, _ := NewService(&mockRepository{failOnGetByEmail: true}, &mockHashService{})
 
 		user, err := svc.Register(username, email, password)
 		if err != nil {

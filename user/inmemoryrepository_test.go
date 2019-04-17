@@ -116,8 +116,8 @@ func TestInMemoryRepositoryGettingByID(t *testing.T) {
 		usersByEmail: map[string]*entity.User{email: &user},
 	}
 
-	t.Run("returns nil when no user is found", func(t *testing.T) {
-		if user, _ := repo.GetByID("no.way.this.exists"); user != nil {
+	t.Run("returns error when no user is found", func(t *testing.T) {
+		if _, err := repo.GetByID("no.way.this.exists"); err == nil {
 			t.Fail()
 		}
 	})
@@ -147,8 +147,8 @@ func TestInMemoryRepositoryGettingByEmail(t *testing.T) {
 		usersByEmail: map[string]*entity.User{email: &user},
 	}
 
-	t.Run("returns nil when no user is found", func(t *testing.T) {
-		if user, _ := repo.GetByEmail("no.way.this.exists"); user != nil {
+	t.Run("returns error when no user is found", func(t *testing.T) {
+		if _, err := repo.GetByEmail("no.way.this.exists"); err == nil {
 			t.Fail()
 		}
 	})

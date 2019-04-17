@@ -47,6 +47,10 @@ func (svc *service) Register(username string, email string, password string) (*e
 		return nil, fmt.Errorf("user.Service.Register: %s", err)
 	}
 
+	if _, err := svc.repo.GetByEmail(email); err == nil {
+		return nil, fmt.Errorf("user.Service.Register: user already exists with emal \"%s\"", email)
+	}
+
 	hashedPassword, err := svc.hashSvc.GenerateFromPassword(password)
 	if err != nil {
 		return nil, fmt.Errorf("user.Service.Register: failed to hash password (%s)", err)
