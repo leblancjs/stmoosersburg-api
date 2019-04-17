@@ -15,61 +15,26 @@ func TestHandlerConstruction(t *testing.T) {
 	mockResponseEncoder := newMockResponseEncoder(nil)
 	mockErrorEncoder := newMockErrorEncoder()
 
-	t.Run("fails when endpoint is missing", func(t *testing.T) {
-		if _, err := NewHandler(
-			nil,
-			mockRequestDecoder.decode,
-			mockResponseEncoder.encode,
-			mockErrorEncoder.encode,
-		); err == nil {
-			t.Fail()
-		}
-	})
-
-	t.Run("fails when decode request func is missing", func(t *testing.T) {
-		if _, err := NewHandler(
-			mockEndpoint.endpoint,
-			nil,
-			mockResponseEncoder.encode,
-			mockErrorEncoder.encode,
-		); err == nil {
-			t.Fail()
-		}
-	})
-
-	t.Run("fails when encode response func is missing", func(t *testing.T) {
-		if _, err := NewHandler(
-			mockEndpoint.endpoint,
-			mockRequestDecoder.decode,
-			nil,
-			mockErrorEncoder.encode,
-		); err == nil {
-			t.Fail()
-		}
-	})
-
-	t.Run("fails when encode error func is missing", func(t *testing.T) {
-		if _, err := NewHandler(
-			mockEndpoint.endpoint,
-			mockRequestDecoder.decode,
-			mockResponseEncoder.encode,
-			nil,
-		); err == nil {
-			t.Fail()
-		}
-	})
-
 	t.Run("returns handler when all is well", func(t *testing.T) {
-		handler, err := NewHandler(
+		handler := NewHandler(
 			mockEndpoint.endpoint,
 			mockRequestDecoder.decode,
 			mockResponseEncoder.encode,
 			mockErrorEncoder.encode,
 		)
-		if err != nil {
+		if handler == nil {
 			t.Fail()
 		}
-		if handler == nil {
+		if handler.endpoint == nil {
+			t.Fail()
+		}
+		if handler.decodeRequest == nil {
+			t.Fail()
+		}
+		if handler.encodeResponse == nil {
+			t.Fail()
+		}
+		if handler.encodeError == nil {
 			t.Fail()
 		}
 	})
@@ -86,7 +51,7 @@ func TestHandlerServing(t *testing.T) {
 			fmt.Errorf("failed to decode request"),
 		)
 
-		handler, _ := NewHandler(
+		handler := NewHandler(
 			mockEndpoint.endpoint,
 			mockRequestDecoder.decode,
 			mockResponseEncoder.encode,
@@ -119,7 +84,7 @@ func TestHandlerServing(t *testing.T) {
 			fmt.Errorf("endpoint failed to process request"),
 		)
 
-		handler, _ := NewHandler(
+		handler := NewHandler(
 			mockEndpoint.endpoint,
 			mockRequestDecoder.decode,
 			mockResponseEncoder.encode,
@@ -151,7 +116,7 @@ func TestHandlerServing(t *testing.T) {
 			fmt.Errorf("failed to encode response"),
 		)
 
-		handler, _ := NewHandler(
+		handler := NewHandler(
 			mockEndpoint.endpoint,
 			mockRequestDecoder.decode,
 			mockResponseEncoder.encode,

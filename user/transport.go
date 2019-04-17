@@ -11,33 +11,27 @@ import (
 	stmhttp "github.com/leblancjs/stmoosersburg-api/transport/http"
 )
 
-func MakeHandler(us Service) (http.Handler, error) {
-	registerUserHandler, err := stmhttp.NewHandler(
+func MakeHandler(us Service) http.Handler {
+	registerUserHandler := stmhttp.NewHandler(
 		makeRegisterUserEndpoint(us),
 		decodeRegisterUserRequest,
 		encodeRegisterUserResponse,
 		encodeError,
 	)
-	if err != nil {
-		return nil, fmt.Errorf("user.MakeHandler: failed to create register user handler (%s)", err)
-	}
 
-	getUserByIDHandler, err := stmhttp.NewHandler(
+	getUserByIDHandler := stmhttp.NewHandler(
 		makeGetUserByIDEndpoint(us),
 		decodeGetUserByIDRequest,
 		encodeResponse,
 		encodeError,
 	)
-	if err != nil {
-		return nil, fmt.Errorf("user.MakeHandler: failed to create get user by ID handler (%s)", err)
-	}
 
 	r := mux.NewRouter()
 
 	r.Handle("/v1/users", registerUserHandler).Methods("POST")
 	r.Handle("/v1/users/{id}", getUserByIDHandler).Methods("GET")
 
-	return r, nil
+	return r
 }
 
 func decodeRegisterUserRequest(_ context.Context, r *http.Request) (interface{}, error) {

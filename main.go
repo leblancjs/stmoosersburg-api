@@ -23,10 +23,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	userHandler, err := user.MakeHandler(userSvc)
-	if err != nil {
-		log.Fatal(err)
-	}
+	userHandler := user.MakeHandler(userSvc)
 
 	mux := http.NewServeMux()
 	mux.Handle("/v1/", userHandler)

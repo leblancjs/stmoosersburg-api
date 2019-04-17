@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/leblancjs/stmoosersburg-api/endpoint"
@@ -24,26 +23,13 @@ func NewHandler(
 	decodeRequest DecodeRequestFunc,
 	encodeResponse EncodeResponseFunc,
 	encodeError EncodeErrorFunc,
-) (*Handler, error) {
-	if endpoint == nil {
-		return nil, fmt.Errorf("transport.http.NewHandler: endpoint is required")
-	}
-	if decodeRequest == nil {
-		return nil, fmt.Errorf("transport.http.NewHandler: decode request function is required")
-	}
-	if encodeResponse == nil {
-		return nil, fmt.Errorf("transport.http.NewHandler: encode response function is required")
-	}
-	if encodeError == nil {
-		return nil, fmt.Errorf("transport.http.NewHandler: encode error function is required")
-	}
-
+) *Handler {
 	return &Handler{
 		endpoint,
 		decodeRequest,
 		encodeResponse,
 		encodeError,
-	}, nil
+	}
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
