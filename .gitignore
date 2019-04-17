@@ -5,6 +5,9 @@
 *.so
 *.dylib
 
+# VS Code binary built for debugging
+debug
+
 # Test binary, build with `go test -c`
 *.test
 
