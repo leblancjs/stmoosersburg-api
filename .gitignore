@@ -16,3 +16,6 @@ debug
 
 # macOS
 .DS_Store
+
+# Environment variables
+.env
