@@ -26,7 +26,7 @@ func NewService(provider Provider) (Service, error) {
 func (svc *service) GenerateFromPassword(password string) (string, error) {
 	hash, err := svc.provider.FromPassword(password)
 	if err != nil {
-		return "", fmt.Errorf("hash.Service: failed to generate hash from password (%s)", err)
+		return "", fmt.Errorf("hash.Service.GenerateFromPassword: failed to generate hash from password (%s)", err)
 	}
 
 	return string(hash), nil
