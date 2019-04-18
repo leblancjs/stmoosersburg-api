@@ -10,12 +10,12 @@ import (
 )
 
 type inMemoryRepository struct {
-	nextID int
-	db     *db.InMemory
+	nextID   int
+	database *db.InMemory
 }
 
-func NewInMemoryRepository(db *db.InMemory) Repository {
-	return &inMemoryRepository{0, db}
+func NewInMemoryRepository(database *db.InMemory) Repository {
+	return &inMemoryRepository{0, database}
 }
 
 func (repo *inMemoryRepository) Create(username string, email string, password string) (*entity.User, error) {
@@ -28,7 +28,7 @@ func (repo *inMemoryRepository) Create(username string, email string, password s
 
 	repo.nextID++
 
-	repo.db.Users = append(repo.db.Users, user)
+	repo.database.Users = append(repo.database.Users, user)
 
 	return &user, nil
 }
@@ -36,7 +36,7 @@ func (repo *inMemoryRepository) Create(username string, email string, password s
 func (repo *inMemoryRepository) GetByID(id string) (*entity.User, error) {
 	var user *entity.User
 
-	for _, u := range repo.db.Users {
+	for _, u := range repo.database.Users {
 		if strings.Compare(id, u.ID) == 0 {
 			user = &u
 			break
@@ -53,7 +53,7 @@ func (repo *inMemoryRepository) GetByID(id string) (*entity.User, error) {
 func (repo *inMemoryRepository) GetByEmail(email string) (*entity.User, error) {
 	var user *entity.User
 
-	for _, u := range repo.db.Users {
+	for _, u := range repo.database.Users {
 		if strings.Compare(email, u.Email) == 0 {
 			user = &u
 			break

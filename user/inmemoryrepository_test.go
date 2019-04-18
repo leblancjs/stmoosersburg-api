@@ -33,7 +33,7 @@ func TestInMemoryRepositoryConstructor(t *testing.T) {
 		if repo == nil {
 			t.Fail()
 		}
-		if repo.db != database {
+		if repo.database != database {
 			t.Fail()
 		}
 	})
@@ -81,7 +81,7 @@ func TestInMemoryRepositoryCreation(t *testing.T) {
 
 		expectedUser, _ := repo.Create(username, email, password)
 
-		user := repo.db.Users[0]
+		user := repo.database.Users[0]
 
 		if strings.Compare(expectedUser.ID, user.ID) != 0 {
 			t.Fail()
@@ -102,8 +102,8 @@ func TestInMemoryRepositoryGettingByID(t *testing.T) {
 	database.Users = append(database.Users, user)
 
 	repo := inMemoryRepository{
-		nextID: 1,
-		db:     database,
+		nextID:   1,
+		database: database,
 	}
 
 	t.Run("returns error when no user is found", func(t *testing.T) {
@@ -136,8 +136,8 @@ func TestInMemoryRepositoryGettingByEmail(t *testing.T) {
 	database.Users = append(database.Users, user)
 
 	repo := inMemoryRepository{
-		nextID: 1,
-		db:     database,
+		nextID:   1,
+		database: database,
 	}
 
 	t.Run("returns error when no user is found", func(t *testing.T) {
