@@ -7,6 +7,8 @@ import (
 
 	"github.com/gorilla/handlers"
 
+	_ "github.com/lib/pq"
+
 	"github.com/leblancjs/stmoosersburg-api/hash"
 	"github.com/leblancjs/stmoosersburg-api/user"
 )
