@@ -110,8 +110,11 @@ func TestBuildingPostgresDataSourceName(t *testing.T) {
 			conf.User,
 		)
 
+		c := conf
+		c.Password = ""
+
 		db := Postgres{
-			db: db{conf},
+			db: db{c},
 		}
 
 		dataSourceName := db.buildDataSourceName()

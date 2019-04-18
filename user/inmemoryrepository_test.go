@@ -5,6 +5,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/leblancjs/stmoosersburg-api/db"
 	"github.com/leblancjs/stmoosersburg-api/entity"
 )
 
@@ -16,36 +17,34 @@ const (
 )
 
 func TestInMemoryRepositoryConstructor(t *testing.T) {
-	repo, _ := NewInMemoryRepository().(*inMemoryRepository)
+	database := &db.InMemory{}
 
 	t.Run("starts nextID at zero", func(t *testing.T) {
+		repo, _ := NewInMemoryRepository(database).(*inMemoryRepository)
+
 		if repo.nextID != 0 {
 			t.Fail()
 		}
 	})
 
-	t.Run("makes empty map of IDs to users", func(t *testing.T) {
-		if len(repo.usersByID) != 0 {
+	t.Run("returns a repository with the given database", func(t *testing.T) {
+		repo, _ := NewInMemoryRepository(database).(*inMemoryRepository)
+
+		if repo == nil {
 			t.Fail()
 		}
-	})
-
-	t.Run("makes empty map of emails to users", func(t *testing.T) {
-		if len(repo.usersByEmail) != 0 {
-			t.Fail()
-		}
-	})
-
-	t.Run("returns a repository", func(t *testing.T) {
-		if repo := NewInMemoryRepository(); repo == nil {
+		if repo.db != database {
 			t.Fail()
 		}
 	})
 }
 
 func TestInMemoryRepositoryCreation(t *testing.T) {
+	database := &db.InMemory{}
+	database.Open()
+
 	t.Run("creates a new user with the given username, email, and password, and a new ID", func(t *testing.T) {
-		repo, _ := NewInMemoryRepository().(*inMemoryRepository)
+		repo, _ := NewInMemoryRepository(database).(*inMemoryRepository)
 
 		expectedUserID := strconv.Itoa(repo.nextID)
 
@@ -66,7 +65,7 @@ func TestInMemoryRepositoryCreation(t *testing.T) {
 	})
 
 	t.Run("increments nextID", func(t *testing.T) {
-		repo, _ := NewInMemoryRepository().(*inMemoryRepository)
+		repo, _ := NewInMemoryRepository(database).(*inMemoryRepository)
 
 		initialNextID := repo.nextID
 
@@ -77,24 +76,12 @@ func TestInMemoryRepositoryCreation(t *testing.T) {
 		}
 	})
 
-	t.Run("adds a new user to the map of IDs to users", func(t *testing.T) {
-		repo, _ := NewInMemoryRepository().(*inMemoryRepository)
+	t.Run("adds a new user to the database's list of users", func(t *testing.T) {
+		repo, _ := NewInMemoryRepository(database).(*inMemoryRepository)
 
 		expectedUser, _ := repo.Create(username, email, password)
 
-		user := repo.usersByID[expectedUser.ID]
-
-		if strings.Compare(expectedUser.ID, user.ID) != 0 {
-			t.Fail()
-		}
-	})
-
-	t.Run("adds a new user to the map of emails to users", func(t *testing.T) {
-		repo, _ := NewInMemoryRepository().(*inMemoryRepository)
-
-		expectedUser, _ := repo.Create(username, email, password)
-
-		user := repo.usersByEmail[expectedUser.Email]
+		user := repo.db.Users[0]
 
 		if strings.Compare(expectedUser.ID, user.ID) != 0 {
 			t.Fail()
@@ -110,10 +97,13 @@ func TestInMemoryRepositoryGettingByID(t *testing.T) {
 		Password: password,
 	}
 
+	database := &db.InMemory{}
+	database.Open()
+	database.Users = append(database.Users, user)
+
 	repo := inMemoryRepository{
-		nextID:       1,
-		usersByID:    map[string]*entity.User{id: &user},
-		usersByEmail: map[string]*entity.User{email: &user},
+		nextID: 1,
+		db:     database,
 	}
 
 	t.Run("returns error when no user is found", func(t *testing.T) {
@@ -141,10 +131,13 @@ func TestInMemoryRepositoryGettingByEmail(t *testing.T) {
 		Password: password,
 	}
 
+	database := &db.InMemory{}
+	database.Open()
+	database.Users = append(database.Users, user)
+
 	repo := inMemoryRepository{
-		nextID:       1,
-		usersByID:    map[string]*entity.User{id: &user},
-		usersByEmail: map[string]*entity.User{email: &user},
+		nextID: 1,
+		db:     database,
 	}
 
 	t.Run("returns error when no user is found", func(t *testing.T) {
