@@ -23,9 +23,9 @@ DB_TYPE=inmemory|postgres
 ```
 
 #### Postgres
-A few additional environment variables need to be set to connect to a Postgres database: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`.
+A few additional environment variables need to be set to connect to a Postgres database: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, and `DB_SSL_MODE`.
 
-They are all required, except for `DB_PASSWORD` if the user does not have a password, though that is ill-advised.
+Their default values configure a connection to a Postgres database hosted on localhost.
 
 ```
 # Defaults to "localhost"
@@ -37,11 +37,15 @@ DB_PORT=1234
 # Defaults to "postgres"
 DB_USER=username
 
+# Defaults to an empty string ""
 # Omit, or leave blank if the database user doesn't have a password
 DB_PASSWORD=password
 
 # Defaults to "stmoosersburg"
 DB_NAME=database
+
+# Defaults to "disable" for databases hosted on localhost
+DB_SSL_MODE=required|disable
 ```
 
 ##### Schema

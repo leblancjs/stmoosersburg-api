@@ -5,10 +5,44 @@ import (
 	"fmt"
 )
 
+const (
+	defaultHost    = "localhost"
+	defaultPort    = "5432"
+	defaultUser    = "postgres"
+	defaultName    = "stmoosersburg"
+	defaultSSLMode = "disable"
+)
+
 // Postgres represents a Postgres database by wrapping an SQL database handle.
 type Postgres struct {
 	db
-	DB *sql.DB
+	*sql.DB
+}
+
+// NewPostgres creates a Postgres database with the given configuration.
+//
+// If the configuration has empty fields, they are populated with their default
+// values.
+func NewPostgres(conf Config) *Postgres {
+	if conf.Host == "" {
+		conf.Host = defaultHost
+	}
+	if conf.Port == "" {
+		conf.Port = defaultPort
+	}
+	if conf.User == "" {
+		conf.User = defaultUser
+	}
+	if conf.Name == "" {
+		conf.Name = defaultName
+	}
+	if conf.SSLMode == "" {
+		conf.SSLMode = defaultSSLMode
+	}
+
+	return &Postgres{
+		db: db{conf},
+	}
 }
 
 // Open opens a connection to a Postgres database based on the configuration,
@@ -50,10 +84,11 @@ func (db *Postgres) Close() error {
 
 func (db *Postgres) buildDataSourceName() string {
 	dsName := fmt.Sprintf(
-		"host=%s port=%s dbname=%s user=%s",
+		"host=%s port=%s dbname=%s sslmode=%s user=%s",
 		db.conf.Host,
 		db.conf.Port,
 		db.conf.Name,
+		db.conf.SSLMode,
 		db.conf.User,
 	)
 

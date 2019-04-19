@@ -11,6 +11,13 @@ type InMemory struct {
 	Users []entity.User
 }
 
+// NewInMemory creates an in memory database with the given configuration.
+func NewInMemory(conf Config) *InMemory {
+	return &InMemory{
+		db: db{conf},
+	}
+}
+
 // Open opens the in memory database by creating the appropriate collections.
 func (db *InMemory) Open() error {
 	db.Users = make([]entity.User, 0)

@@ -17,6 +17,82 @@ func init() {
 	sql.Register("postgres", mDriver)
 }
 
+func TestPostgresDatabaseCreation(t *testing.T) {
+	t.Run("sets host to default value when it is empty in configuration", func(t *testing.T) {
+		db := NewPostgres(Config{})
+
+		if strings.Compare(defaultHost, db.conf.Host) != 0 {
+			t.Fail()
+		}
+	})
+
+	t.Run("sets port to default value when it is empty in configuration", func(t *testing.T) {
+		db := NewPostgres(Config{})
+
+		if strings.Compare(defaultPort, db.conf.Port) != 0 {
+			t.Fail()
+		}
+	})
+
+	t.Run("sets user to default value when it is empty in configuration", func(t *testing.T) {
+		db := NewPostgres(Config{})
+
+		if strings.Compare(defaultUser, db.conf.User) != 0 {
+			t.Fail()
+		}
+	})
+
+	t.Run("sets name to default value when it is empty in configuration", func(t *testing.T) {
+		db := NewPostgres(Config{})
+
+		if strings.Compare(defaultName, db.conf.Name) != 0 {
+			t.Fail()
+		}
+	})
+
+	t.Run("sets SSL mode to default value when it is empty in configuration", func(t *testing.T) {
+		db := NewPostgres(Config{})
+
+		if strings.Compare(defaultSSLMode, db.conf.SSLMode) != 0 {
+			t.Fail()
+		}
+	})
+
+	t.Run("returns a postgres database with given configuration when all is well", func(t *testing.T) {
+		conf := Config{
+			Host:     "host",
+			Port:     "port",
+			User:     "user",
+			Password: "password",
+			Name:     "name",
+			SSLMode:  "sslMode",
+		}
+
+		db := NewPostgres(conf)
+		if db == nil {
+			t.FailNow()
+		}
+		if strings.Compare(conf.Host, db.conf.Host) != 0 {
+			t.Fail()
+		}
+		if strings.Compare(conf.Port, db.conf.Port) != 0 {
+			t.Fail()
+		}
+		if strings.Compare(conf.User, db.conf.User) != 0 {
+			t.Fail()
+		}
+		if strings.Compare(conf.Password, db.conf.Password) != 0 {
+			t.Fail()
+		}
+		if strings.Compare(conf.Name, db.conf.Name) != 0 {
+			t.Fail()
+		}
+		if strings.Compare(conf.SSLMode, db.conf.SSLMode) != 0 {
+			t.Fail()
+		}
+	})
+}
+
 func TestOpeningPostgresDatabase(t *testing.T) {
 	t.Run("fails when driver fails to open connection", func(t *testing.T) {
 		mDriver.failOnOpen = true
@@ -103,10 +179,11 @@ func TestBuildingPostgresDataSourceName(t *testing.T) {
 
 	t.Run("returns data source name without password when it is blank in configuration", func(t *testing.T) {
 		expectedDataSourceName := fmt.Sprintf(
-			"host=%s port=%s dbname=%s user=%s",
+			"host=%s port=%s dbname=%s sslmode=%s user=%s",
 			conf.Host,
 			conf.Port,
 			conf.Name,
+			conf.SSLMode,
 			conf.User,
 		)
 
@@ -125,10 +202,11 @@ func TestBuildingPostgresDataSourceName(t *testing.T) {
 
 	t.Run("returns data source name with password", func(t *testing.T) {
 		expectedDataSourceName := fmt.Sprintf(
-			"host=%s port=%s dbname=%s user=%s password=%s",
+			"host=%s port=%s dbname=%s sslmode=%s user=%s password=%s",
 			conf.Host,
 			conf.Port,
 			conf.Name,
+			conf.SSLMode,
 			conf.User,
 			conf.Password,
 		)

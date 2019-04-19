@@ -39,6 +39,10 @@ type Config struct {
 
 	// Name represents the name of the database to use.
 	Name string
+
+	// SSLMode represents whether or not SSL is required to connect to the
+	// database.
+	SSLMode string
 }
 
 // A DB is an interface representing the ability to open and close a connection
@@ -64,13 +68,9 @@ type db struct {
 func New(dbType string, dbConf Config) (DB, error) {
 	switch dbType {
 	case TypeInMemory:
-		return &InMemory{
-			db: db{dbConf},
-		}, nil
+		return NewInMemory(dbConf), nil
 	case TypePostgres:
-		return &Postgres{
-			db: db{dbConf},
-		}, nil
+		return NewPostgres(dbConf), nil
 	default:
 		return nil, fmt.Errorf(
 			"db.Config: unknown type \"%s\"; must be %s or %s",

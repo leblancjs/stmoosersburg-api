@@ -61,6 +61,7 @@ func configureDatabase() (db.DB, error) {
 		User:     os.Getenv("DB_USER"),
 		Password: os.Getenv("DB_PASSWORD"),
 		Name:     os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSL_MODE"),
 	}
 
 	database, err := db.New(databaseType, databaseConfig)

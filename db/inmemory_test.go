@@ -2,6 +2,14 @@ package db
 
 import "testing"
 
+func TestInMemoryDatabaseCreation(t *testing.T) {
+	t.Run("returns an in memory database", func(t *testing.T) {
+		if db := NewInMemory(Config{}); db == nil {
+			t.Fail()
+		}
+	})
+}
+
 func TestOpeningInMemoryDatabase(t *testing.T) {
 	t.Run("creates an empty array of users when all is well", func(t *testing.T) {
 		db := InMemory{}
