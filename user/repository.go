@@ -16,7 +16,9 @@ type Repository interface {
 func NewRepository(database db.DB) (Repository, error) {
 	if inmemory, ok := database.(*db.InMemory); ok {
 		return NewInMemoryRepository(inmemory), nil
-	} else {
-		return nil, fmt.Errorf("user.NewRepository: unsupported database type")
+	} else if postgres, ok := database.(*db.Postgres); ok {
+		return NewPostgresRepository(postgres), nil
 	}
+
+	return nil, fmt.Errorf("user.NewRepository: unsupported database type")
 }

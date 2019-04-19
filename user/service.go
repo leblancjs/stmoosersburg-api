@@ -47,8 +47,15 @@ func (svc *service) Register(username string, email string, password string) (*e
 		return nil, fmt.Errorf("user.Service.Register: %s", err)
 	}
 
+	// TODO: Fix bug where an SQL error will be interpreted as "no user exists"
+	//
+	// Either return nil upon success when no user is found, or a custom error
+	// that indicates that no user was found or that an SQL error occurred.
+	//
+	// Nil user is probably the better option... let the service here decide
+	// if it's an error or not. The repository just does its job.
 	if _, err := svc.repo.GetByEmail(email); err == nil {
-		return nil, fmt.Errorf("user.Service.Register: user already exists with emal \"%s\"", email)
+		return nil, fmt.Errorf("user.Service.Register: user already exists with email \"%s\"", email)
 	}
 
 	hashedPassword, err := svc.hashSvc.GenerateFromPassword(password)
