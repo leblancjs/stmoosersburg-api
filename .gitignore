@@ -19,3 +19,6 @@ debug
 
 # Environment variables
 .env
+
+# JetBrains
+.idea/
